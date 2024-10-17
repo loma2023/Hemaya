@@ -1,0 +1,159 @@
+<%- include('Partials/Header.ejs'); -%>
+
+    <%- include('Partials/Menu.ejs'); -%>
+
+        <div class="Layout-Container">
+            <div class="Receipts-container">
+
+                <div style="display: none;">
+                    <%- include('Partials/DetailsCompany.ejs'); -%>
+                </div>
+
+                <div class="Receipt-Right">
+                    <div class="Row grid-3">
+                        <div class="input-box">
+                            <select class="DocType">
+                                <option value="empty" selected disabled>نوع الفاتورة</option>
+                                <% if (Title.includes("استئجأر")) { %>
+                                    <option value="استئجأر">استئجأر</option>
+                                    <option value="مرتجع استئجأر"> مرتجع استئجأر </option>
+                                    <% } %>
+                                        <% if (Title.includes("تأجير")) { %>
+                                            <option value="تأجير">تأجير</option>
+                                            <option value="مرتجع تأجير"> مرتجع تأجير </option>
+                                            <% } %>
+                            </select>
+                            <label>نوع الفاتورة</label>
+                            <span class='bx bx-receipt'></span>
+                        </div>
+                        <div class="input-box">
+                            <input type="text" class="DocDate" onfocus="(this.type='date')" onblur="(this.type='text')"
+                                required>
+                            <label> تاريخ الفاتورة</label>
+                            <i class="bx bx-calendar"></i>
+                            <span class='bx bx-calendar'></span>
+                        </div>
+                        <div class="Select-box">
+                            <div class="input-box">
+                                <input type="button" id="empty" class="NamePerson" onfocus="FocusInput(event)"
+                                    value="الاسم" required>
+                                <label>الاسم *</label>
+                                <span class="bx bx-user"></span>
+                                <i class="bx bx-chevron-down"></i>
+                            </div>
+                            <div class="SelectMenu">
+                                <div class="input-box">
+                                    <input type="search" placeholder="ابحث هنا .. " class="SearchInput Person"
+                                        onblur="BlurInput(event)" onkeyup="SearchSelect(event)">
+                                    <span class="bx bx-search"></span>
+                                </div>
+                                <div class="SelectItmes">
+                                    <% let Datas=MainData.CustomersData%>
+                                        <% Datas.forEach(Person=> { %>
+                                            <% if (Person.Status !="FALSE" ) { %>
+                                                <h3 id="<%= Person._id %>">
+                                                    <%= Person.Name %>
+                                                </h3>
+                                                <% }}) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Table-Container">
+                        <table class="Table">
+                            <thead>
+                                <tr>
+                                    <th>الصنف</th>
+                                    <th>الكمية</th>
+                                    <th>السعر</th>
+                                    <th>الاجمالي</th>
+                                    <th>بيان</th>
+                                    <th>الاجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody class="Table-body">
+                                <tr>
+                                    <td width="20%">
+                                        <input type="text" class="NameItem" placeholder="اسم الصنف">
+                                    </td>
+                                    <td width="12%">
+                                        <input type="text" onchange="TotalItem(event)" onkeyup="TotalItem(event)"
+                                            class="QtyItem" value="0" onfocus="(this.type='number')"
+                                            onblur="(this.type='text')" min="1">
+                                    </td>
+                                    <td width="12%">
+                                        <input type="text" onchange="TotalItem(event)" onkeyup="TotalItem(event)"
+                                            class="PriceItem" value="0" onfocus="(this.type='number')"
+                                            onblur="(this.type='text')" min="1">
+                                    </td>
+                                    <td width="12%"><input class="TotalItem" type="text" value="0.00" disabled></td>
+                                    <td width="39%">
+                                        <input type="text" class="StatmentItem" placeholder="بيان">
+                                    </td>
+                                    <td width="5%">
+                                        <div class="FlexTD">
+                                            <div class="btn-box">
+                                                <div class="tooltip">اضافة صنف</div>
+                                                <button type="button" class="btn btn-plus bx bx-plus" id="1"
+                                                    onclick="AddOrRemoveItem(event)">
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="Receipt-left">
+                    <div class="card-item nu-Receipt Orange">
+                        <i class='item-icon bx bx-receipt'></i>
+                        <div class="center">
+                            <h3>رقم الفاتورة</h3>
+                        </div>
+                        <div class="left">
+                            <h3 class="NuReceipt"></h3>
+                        </div>
+                    </div>
+                    <div class="card-item Primary">
+                        <i class='item-icon bx bx-dollar'></i>
+                        <div class="center">
+                            <h3>اجمالي الفاتورة</h3>
+                        </div>
+                        <div class="left">
+                            <h3 class="TotalReceipt">0.00</h3>
+                        </div>
+                    </div>
+                    <div class="input-box mrg-t-50">
+                        <select id="TypeAmount" class="TypeAmount">
+                            <option value="empty" selected hidden>غير محدد</option>
+                            <option value="نقدي">نقدي</option>
+                            <option value="آجل">آجل</option>
+                        </select>
+                        <label>طريقة الدفع </label>
+                        <span class='bx bx-receipt'></span>
+                    </div>
+                    <button type="button" Status="True" id="Save" onclick="NewReceipt(event)"
+                        class="btn btn-Save btn-Receipt">حفظ الفاتورة</button>
+                    <div class="btn-box">
+                        <button type="button" onclick="location.reload()" class="btn btn-History">فاتورة
+                            جديدة</button>
+                        <button type="button" Status="True" id="Save" onclick="NewReceipt(event)"
+                            class="btn btn-print btn-Receipt">حفظ وطباعة</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <%- include('Partials/Footer.ejs'); -%>
+
+            <script src="Js/13-Receipts.js"></script>
+
+            </body>
+
+            </html>
