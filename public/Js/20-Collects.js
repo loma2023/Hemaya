@@ -3,7 +3,7 @@ function FetchData() {
         .then((res) => res.json())
         .then((Data) => { ShowAllReceipts(Data[0], Data[1]) })
         .then(() => { CreateArray(); document.querySelector(".Loader").style = "display:none;" })
-        .catch((err) => { return location.href = "/Error" })
+        .catch((err) => { console.log(err) })
 } FetchData()
 
 // Show GeneralData Data And Expenses Data 
@@ -18,8 +18,8 @@ function ShowAllReceipts(MainData, Decode) {
     MainData.GeneralData.forEach(Receipt => {
         index = Table.querySelectorAll("tr").length + 1
         if (Receipt.DocType.includes("دفع")) { Revenues = MainData.ExpensesData; Status2 = "المصاريف" }
+       
         if (Receipt.DocType.includes("سند")) {
-           
             let CreatedBy = ''
             if (MainData._id == Receipt.CreatedBy) { CreatedBy = MainData.Username }
             else { CreatedBy = (MainData.UsersData.find(User => User._id == Receipt.CreatedBy)).Username }
