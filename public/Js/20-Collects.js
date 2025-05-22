@@ -27,6 +27,10 @@ function ShowAllReceipts(MainData, Decode) {
             let ChooseStatus = Status1
             let Name = (Customers.find(item => item._id == Receipt.Name))
             if (Name == undefined) { ChooseStatus = Status2; Name = (Revenues.find(item => item._id == Receipt.Name)) }
+
+            if (Receipt.DocType.includes("قبض")) { SumDebit += Receipt.Total }
+            if (Receipt.DocType.includes("دفع")) { SumCredit += Receipt.Total }
+            
             Table.innerHTML += `
             <tr id="${Receipt._id}">
                 <td>${index}</td>
