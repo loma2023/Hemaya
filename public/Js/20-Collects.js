@@ -3,7 +3,7 @@ function FetchData() {
         .then((res) => res.json())
         .then((Data) => { ShowAllReceipts(Data[0], Data[1]) })
         .then(() => { CreateArray(); document.querySelector(".Loader").style = "display:none;" })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { return location.href = "/Error" })
 } FetchData()
 
 // Show GeneralData Data And Expenses Data 
@@ -26,11 +26,9 @@ function ShowAllReceipts(MainData, Decode) {
 
             let ChooseStatus = Status1
             let Name = (Customers.find(item => item._id == Receipt.Name))
-            if (Name === undefined) { ChooseStatus = Status2; Name = "123" }
+            if (Name == undefined) { ChooseStatus = Status2; Name = (Revenues.find(item => item._id == Receipt.Name)) }
             
-            if (Receipt.DocType.includes("قبض")) { SumDebit += Receipt.Total }
-            if (Receipt.DocType.includes("دفع")) { SumCredit += Receipt.Total }
-            console.log(Name)
+            
             Table.innerHTML += `
             <tr id="${Receipt._id}">
                 <td>${index}</td>
