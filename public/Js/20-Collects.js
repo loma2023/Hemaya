@@ -37,7 +37,7 @@ function ShowAllReceipts(MainData, Decode) {
                 <td>${Receipt.DocDate}</td>
                 <td>${Receipt.DocNu}</td>
                 <td>${Receipt.DocType}</td>
-                <td Status="${ChooseStatus}" id="${Receipt.Name}">12 </td>
+                <td Status="${ChooseStatus}" id="${Receipt.Name}">${Name.Name}  </td>
                 <td>${Receipt.Statment}</td>
                 <td>${Receipt.Total}</td>
                 <td>${CreatedBy}</td>
