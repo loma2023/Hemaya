@@ -16,7 +16,7 @@ function ShowAllReceipts(MainData, Decode) {
 
     let SumDebit = 0.00, SumCredit = 0.00
     MainData.GeneralData.forEach(Receipt => {
-        let index = Table.querySelectorAll("tr").length + 1
+        index = Table.querySelectorAll("tr").length + 1
         if (Receipt.DocType.includes("دفع")) { Revenues = MainData.ExpensesData; Status2 = "المصاريف" }
         if (Receipt.DocType.includes("سند")) {
            
