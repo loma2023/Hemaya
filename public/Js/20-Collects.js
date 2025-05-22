@@ -16,9 +16,10 @@ function ShowAllReceipts(MainData, Decode) {
 
     let SumDebit = 0.00, SumCredit = 0.00
     MainData.GeneralData.forEach(Receipt => {
+        let index = Table.querySelectorAll("tr").length + 1
         if (Receipt.DocType.includes("دفع")) { Revenues = MainData.ExpensesData; Status2 = "المصاريف" }
         if (Receipt.DocType.includes("سند")) {
-            let index = Table.querySelectorAll("tr").length + 1
+           
             let CreatedBy = ''
             if (MainData._id == Receipt.CreatedBy) { CreatedBy = MainData.Username }
             else { CreatedBy = (MainData.UsersData.find(User => User._id == Receipt.CreatedBy)).Username }
