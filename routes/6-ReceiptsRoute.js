@@ -111,7 +111,7 @@ router.put("/GeneralData:id", RequireAuth, async (req, res) => {
       "GeneralData.$.DocType": req.body.DocType,
       "GeneralData.$.TypeAmount": req.body.TypeAmount,
       "GeneralData.$.DocDate": req.body.DocDate,
-      "GeneralData.$.Name": req.body.Name,  //
+      "GeneralData.$.Name": req.body.Name,  
       "GeneralData.$.Statment": req.body.Statment,
       "GeneralData.$.Debit": req.body.Debit,
       "GeneralData.$.Credit": req.body.Credit,
