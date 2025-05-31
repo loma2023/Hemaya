@@ -154,7 +154,8 @@ function EditCollectOrPayment(id) {
 
     if (Total.value === "" || Total.value < 0.1) { Total.classList.add("Required"); return Toast(id = "Notification", txt = "يرجي إدخال المبلغ ",); }
     if (DocDate.value === "") { DocDate.classList.add("Required"); return Toast(id = "Notification", txt = "يرجي إدخال التاريخ ",); }
-
+if (CustomerID === ""){return Toast(id = "Notification", txt = "حاول مره اخري ",); }
+    
     let DocType = "سند قبض", Debit = "الصندوق",
         Credit = Status, SubDebit = "مقبوضات", SubCredit = CustomerID
 
