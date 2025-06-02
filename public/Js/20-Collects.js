@@ -148,7 +148,7 @@ function EditCollectOrPayment(id) {
     let Total = Form.querySelectorAll(".Total")[1]
     let Statment = Form.querySelectorAll(".Statment")[1].value
     let DocNu = Form.querySelector(".DocNu").innerText
-    let Status = Form.querySelector(".Name").getAttribute("Status")
+    let Status = "العملاء"
 
     DocDate.classList.remove("Required");
     Total.classList.remove("Required");
