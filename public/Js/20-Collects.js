@@ -148,7 +148,8 @@ function EditCollectOrPayment(id) {
     let Total = Form.querySelectorAll(".Total")[1]
     let Statment = Form.querySelectorAll(".Statment")[1].value
     let DocNu = Form.querySelector(".DocNu").innerText
-    let Status = "العملاء"
+    let DocType = Form.querySelector(".DocType").innerText
+    let Status = Form.querySelector(".Name").getAttribute("Status")
 
     DocDate.classList.remove("Required");
     Total.classList.remove("Required");
@@ -157,12 +158,12 @@ function EditCollectOrPayment(id) {
     if (DocDate.value === "") { DocDate.classList.add("Required"); return Toast(id = "Notification", txt = "يرجي إدخال التاريخ ",); }
     if (CustomerID == ""){return Toast(id = "Notification", txt = "حاول مره اخري ",); }
     
-    let DocType = "سند قبض", Debit = "الصندوق",
+    let Debit = "الصندوق",
         Credit = Status, SubDebit = "مقبوضات", SubCredit = CustomerID
 
-    if (Status === "الموردين" || Status === "المصاريف") {
-        DocType = "سند دفع"; Debit = Status;
-        Credit = "الصندوق"; SubDebit = CustomerID; SubCredit = "مدفوعات"
+    if (Status === "المصاريف") {
+     Debit = Status;Credit = "الصندوق";
+        SubDebit = CustomerID; SubCredit = "مدفوعات"
     }
 
     fetch("/GeneralData" + id, {
