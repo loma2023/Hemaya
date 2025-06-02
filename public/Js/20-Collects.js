@@ -16,6 +16,7 @@ function ShowAllReceipts(MainData, Decode) {
 
     let SumDebit = 0.00, SumCredit = 0.00
     MainData.GeneralData.forEach(Receipt => {
+        console.log(Receipt)
         index = Table.querySelectorAll("tr").length + 1
         if (Receipt.DocType.includes("دفع")) { Revenues = MainData.ExpensesData; Status2 = "المصاريف" }
        
@@ -27,8 +28,7 @@ function ShowAllReceipts(MainData, Decode) {
             let ChooseStatus = Status1
             let Name = (Customers.find(item => item._id == Receipt.Name))
             if (Name == undefined) { ChooseStatus = Status2; Name = (Revenues.find(item => item._id == Receipt.Name)) }
-            console.log(Name)
-            console.log(index)
+            
             
             Table.innerHTML += `
             <tr id="${Receipt._id}">
