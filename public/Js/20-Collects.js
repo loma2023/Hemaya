@@ -3,7 +3,7 @@ function FetchData() {
         .then((res) => res.json())
         .then((Data) => { ShowAllReceipts(Data[0], Data[1]) })
         .then(() => { CreateArray(); document.querySelector(".Loader").style = "display:none;" })
-        .catch((err) => { return location.href = "/Error" })
+        .catch((err) => {console.log(err) })
 } FetchData()
 
 // Show GeneralData Data And Expenses Data 
