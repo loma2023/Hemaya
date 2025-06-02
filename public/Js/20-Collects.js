@@ -28,6 +28,7 @@ function ShowAllReceipts(MainData, Decode) {
             let Name = (Customers.find(item => item._id == Receipt.Name))
             if (Name == undefined) { ChooseStatus = Status2; Name = (Revenues.find(item => item._id == Receipt.Name)) }
             console.log(Name)
+            console.log(index)
             
             Table.innerHTML += `
             <tr id="${Receipt._id}">
