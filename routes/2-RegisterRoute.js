@@ -7,7 +7,7 @@ const transporter = Mailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.MY_EMAIL,
-    pass: "j t z s y v s j w a i v k y c s",
+    pass: process.env.MY_PASSWORD,
   }
 });
 require('dotenv').config()
