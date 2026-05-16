@@ -16,8 +16,9 @@ app.set('views', path.join(__dirname, 'views'));
 require("dotenv").config();
 // ******************* Connect With DB  **********************************************
 mongoose.connect(process.env.MONGOOSE_URL)
-  .then(() => { app.listen(PORT, () => { console.log(`http://localhost:${PORT}/`) }) })
-  .catch((err) => { console.log(err) });
+  .then(() => {console.log("MongoDB Connected");})
+  .catch((err) => {console.log(err);});
+module.exports = app;
 // *******************  Import Routes  ***********************************************
 const MainRoute      = require("./routes/0-MainRoute");      app.use(MainRoute);
 const LoginRoute     = require("./routes/1-LoginRoute");     app.use(LoginRoute);
