@@ -15,10 +15,9 @@ app.use(express.static(path.join(__dirname, "public")))
 app.set('views', path.join(__dirname, 'views'));
 require("dotenv").config();
 // ******************* Connect With DB  **********************************************
-mongoose.connect(process.env.MONGOOSE_URL)
-  .then(() => {console.log("MongoDB Connected");})
-  .catch((err) => {console.log(err);});
-module.exports = app;
+const connectDB = require("./config/db");
+
+connectDB();
 // *******************  Import Routes  ***********************************************
 const MainRoute      = require("./routes/0-MainRoute");      app.use(MainRoute);
 const LoginRoute     = require("./routes/1-LoginRoute");     app.use(LoginRoute);
@@ -32,3 +31,4 @@ const SettingsRoute  = require("./routes/10-SettingsRoute"); app.use(SettingsRou
 
 
 app.use((req, res, next) => { res.status(404).redirect("/Error404"); })
+module.exports = app;
