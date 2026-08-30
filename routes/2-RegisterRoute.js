@@ -23,7 +23,7 @@ let CodeTxt = ''
 let RegisterObj = {}
 router.post("/isCurrentEmail", async (req, res) => {
   try {
-    const isCurrentEmail = await HemayaUser.findOne({ Email: req.body.Email });
+    let isCurrentEmail = await HemayaUser.findOne({ Email: req.body.Email });
     if (isCurrentEmail) { return res.json(Msg.ExistEmail); }
     else { return res.json(Msg.Success); }
   }
