@@ -6,10 +6,15 @@ const jwt = require("jsonwebtoken");
 const transporter = Mailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.MY_EMAIL,
-    pass: process.env.MY_PASSWORD,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  // أجبِر Nodemailer على تجاهل مشاكل شهادة الأمان المحلية
+  tls: {
+    rejectUnauthorized: false
   }
 });
+
 require('dotenv').config()
 
 const HemayaUser = require("../models/HemayaSchema");
