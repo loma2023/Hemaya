@@ -97,7 +97,9 @@ function YourCompany(ID) {
 function Register(ID) {
   fetch("/Register", {
     method: "POST",
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       Username: document.querySelector(".Name").value,
       Phone: document.querySelector(".Phone").value,
@@ -111,14 +113,30 @@ function Register(ID) {
       CityCompany: document.querySelector(".CityCompany").value,
       AddressCompany: document.querySelector(".AddressCompany").value,
       PhoneCompany1: document.querySelector(".PhoneCompany1").value,
-      PhoneCompany2: document.querySelector(".PhoneCompany2").value,
+      PhoneCompany2: document.querySelector(".PhoneCompany2").value
     })
   })
-    .then((res) => res.json())
-    .then((Data) => {
-      if (Data.id === "Success") { GoStepNext(ID) }
-      else { Toast(id = Data.id, txt = Data.txt,); }
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP Error: ${res.status}`);
+      }
+
+      return res.json();
     })
+    .then((Data) => {
+      console.log("Register Response:", Data);
+
+      if (Data.id === "Success") {
+        GoStepNext(ID);
+      } else {
+        Toast(Data.id, Data.txt);
+      }
+    })
+    .catch((error) => {
+      console.error("Register Error:", error);
+
+      Toast("Error", "حدث خطأ أثناء التسجيل");
+    });
 }
 
 // STEP 2    &     STEP 1
