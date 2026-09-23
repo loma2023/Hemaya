@@ -1,4 +1,3 @@
-
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -32,19 +31,14 @@ function Login() {
     .then((Data) => {
       if (Data.id === "Success") {
         location.assign("/Home");
-      }
-
-      else if (Data.id === "MaxAge") {
+      } else if (Data.id === "MaxAge") {
         location.assign("/Activation");
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
     })
     .catch((error) => {
       console.error("Login Error:", error);
-
       Toast("Error", "حدث خطأ أثناء تسجيل الدخول");
     });
 }
@@ -92,7 +86,6 @@ function CheckResponse(res) {
 
 function HandleFetchError(error, Message = "حدث خطأ، حاول مرة أخرى") {
   console.error(error);
-
   Toast("Error", Message);
 }
 
@@ -109,6 +102,7 @@ function YourINFO(ID) {
 
   const Name = Step.querySelector(".Name");
   const Phone = Step.querySelector(".Phone");
+  const Address = Step.querySelector(".Address"); // تم إضافته ليتطابق مع دالة التسجيل
   const Email = Step.querySelector(".Email");
   const Password = Step.querySelector(".Password");
   const ConfirmPassword = Step.querySelector(".ConfirmPassword");
@@ -119,119 +113,68 @@ function YourINFO(ID) {
   }
 
   const CheckPhone = /^[0-9\s]+$/;
-
-  const CheckMail =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+  const CheckMail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   Name.classList.remove("Required");
   Phone.classList.remove("Required");
+  if (Address) Address.classList.remove("Required");
   Email.classList.remove("Required");
   Password.classList.remove("Required");
   ConfirmPassword.classList.remove("Required");
 
 
   // Check Name
-
   if (Name.value.trim() === "") {
     Name.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال الاسم"
-    );
+    return Toast("Notification", "يرجى إدخال الاسم");
   }
 
 
   // Check Phone
-
   if (Phone.value.trim() === "") {
     Phone.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال رقم الهاتف"
-    );
-  }
-
-  else if (!CheckPhone.test(Phone.value)) {
+    return Toast("Notification", "يرجى إدخال رقم الهاتف");
+  } else if (!CheckPhone.test(Phone.value)) {
     Phone.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال رقم هاتف صالح"
-    );
-  }
-
-  else if (Phone.value.replace(/\s/g, "").length !== 8) {
+    return Toast("Notification", "يرجى إدخال رقم هاتف صالح");
+  } else if (Phone.value.replace(/\s/g, "").length !== 8) {
     Phone.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يجب أن يكون رقم الهاتف 8 أرقام"
-    );
+    return Toast("Notification", "يجب أن يكون رقم الهاتف 8 أرقام");
   }
 
 
   // Check Email
-
   if (Email.value.trim() === "") {
     Email.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال الإيميل"
-    );
-  }
-
-  else if (!CheckMail.test(Email.value.trim())) {
+    return Toast("Notification", "يرجى إدخال الإيميل");
+  } else if (!CheckMail.test(Email.value.trim())) {
     Email.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال إيميل صالح"
-    );
+    return Toast("Notification", "يرجى إدخال إيميل صالح");
   }
 
 
   // Check Password
-
   if (Password.value.trim() === "") {
     Password.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال كلمة المرور"
-    );
+    return Toast("Notification", "يرجى إدخال كلمة المرور");
   }
 
 
   // Check Confirm Password
-
   if (ConfirmPassword.value.trim() === "") {
     ConfirmPassword.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى تأكيد كلمة المرور"
-    );
+    return Toast("Notification", "يرجى تأكيد كلمة المرور");
   }
 
 
   // Compare Password
-
   if (Password.value !== ConfirmPassword.value) {
     ConfirmPassword.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "كلمة المرور غير متطابقة"
-    );
+    return Toast("Notification", "كلمة المرور غير متطابقة");
   }
 
 
   // Check Current Email
-
   fetch("/isCurrentEmail", {
     method: "POST",
     headers: {
@@ -243,21 +186,14 @@ function YourINFO(ID) {
   })
     .then(CheckResponse)
     .then((Data) => {
-
       if (Data.id === "Success") {
         GoStepNext(ID);
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
-
     })
     .catch((error) => {
-      HandleFetchError(
-        error,
-        "حدث خطأ أثناء التحقق من الإيميل"
-      );
+      HandleFetchError(error, "حدث خطأ أثناء التحقق من الإيميل");
     });
 }
 
@@ -285,31 +221,20 @@ function YourCompany(ID) {
 
 
   // Check Name Company
-
   if (Name.value.trim() === "") {
     Name.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال اسم النشاط"
-    );
+    return Toast("Notification", "يرجى إدخال اسم النشاط");
   }
 
 
   // Check Type Company
-
   if (TypeCompany.value.trim() === "") {
     TypeCompany.classList.add("Required");
-
-    return Toast(
-      "Notification",
-      "يرجى إدخال نوع النشاط"
-    );
+    return Toast("Notification", "يرجى إدخال نوع النشاط");
   }
 
 
   // Register
-
   Register(ID);
 }
 
@@ -320,9 +245,7 @@ function YourCompany(ID) {
 
 let IsRegistering = false;
 
-
 function Register(ID) {
-
   if (IsRegistering) return;
 
   const UserStep = ContainerStep[0];
@@ -333,13 +256,11 @@ function Register(ID) {
     return;
   }
 
-
   const Name = GetValue(UserStep, ".Name");
   const Phone = GetValue(UserStep, ".Phone");
   const Address = GetValue(UserStep, ".Address");
   const Email = GetValue(UserStep, ".Email");
   const Password = UserStep.querySelector(".Password")?.value || "";
-
 
   const NameCompany = GetValue(CompanyStep, ".NameCompany");
   const TypeCompany = GetValue(CompanyStep, ".TypeCompany");
@@ -349,9 +270,7 @@ function Register(ID) {
   const PhoneCompany1 = GetValue(CompanyStep, ".PhoneCompany1");
   const PhoneCompany2 = GetValue(CompanyStep, ".PhoneCompany2");
 
-
   IsRegistering = true;
-
 
   fetch("/Register", {
     method: "POST",
@@ -359,7 +278,6 @@ function Register(ID) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-
       Username: Name,
       Phone: Phone,
       Address: Address,
@@ -373,30 +291,20 @@ function Register(ID) {
       AddressCompany: AddressCompany,
       PhoneCompany1: PhoneCompany1,
       PhoneCompany2: PhoneCompany2
-
     })
   })
     .then(CheckResponse)
     .then((Data) => {
-
       console.log("Register Response:", Data);
 
       if (Data.id === "Success") {
         GoStepNext(ID);
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
-
     })
     .catch((error) => {
-
-      HandleFetchError(
-        error,
-        "حدث خطأ أثناء التسجيل"
-      );
-
+      HandleFetchError(error, "حدث خطأ أثناء التسجيل");
     })
     .finally(() => {
       IsRegistering = false;
@@ -409,19 +317,13 @@ function Register(ID) {
 ========================================================= */
 
 function Verify(link) {
-
   const Code = Array.from(CodeTxts)
     .map((input) => input.value)
     .join("");
 
-
   if (Code.length !== 6) {
-    return Toast(
-      "Notification",
-      "يرجى إدخال رمز التحقق كاملًا"
-    );
+    return Toast("Notification", "يرجى إدخال رمز التحقق كاملًا");
   }
-
 
   const options = {
     method: "POST",
@@ -433,35 +335,21 @@ function Verify(link) {
     })
   };
 
-
   fetch(link, options)
     .then(CheckResponse)
     .then((Data) => {
-
       if (Data.id === "Success") {
-
         if (link === "/ConfirmEmail") {
           GoStepNext(2);
-        }
-
-        else {
+        } else {
           GoStepNext(1);
         }
-
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
-
     })
     .catch((error) => {
-
-      HandleFetchError(
-        error,
-        "حدث خطأ أثناء التحقق من الرمز"
-      );
-
+      HandleFetchError(error, "حدث خطأ أثناء التحقق من الرمز");
     });
 }
 
@@ -471,7 +359,6 @@ function Verify(link) {
 ========================================================= */
 
 function SentCodeToEmail() {
-
   const EmailInput = document.querySelector(".Email");
 
   if (!EmailInput) {
@@ -479,17 +366,11 @@ function SentCodeToEmail() {
     return;
   }
 
-
   const Email = EmailInput.value.trim();
 
-
   if (Email === "") {
-    return Toast(
-      "Notification",
-      "يرجى إدخال الإيميل"
-    );
+    return Toast("Notification", "يرجى إدخال الإيميل");
   }
-
 
   const options = {
     method: "POST",
@@ -501,27 +382,17 @@ function SentCodeToEmail() {
     })
   };
 
-
   fetch("/ForgotPassword", options)
     .then(CheckResponse)
     .then((Data) => {
-
       if (Data.id === "Success") {
         GoStepNext(0);
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
-
     })
     .catch((error) => {
-
-      HandleFetchError(
-        error,
-        "حدث خطأ أثناء إرسال رمز التحقق"
-      );
-
+      HandleFetchError(error, "حدث خطأ أثناء إرسال رمز التحقق");
     });
 }
 
@@ -531,37 +402,24 @@ function SentCodeToEmail() {
 ========================================================= */
 
 function NewPassword() {
-
   const PasswordInput = document.querySelector(".Password");
-  const ConfirmPasswordInput =
-    document.querySelector(".ConfirmPassword");
-
+  const ConfirmPasswordInput = document.querySelector(".ConfirmPassword");
 
   if (!PasswordInput || !ConfirmPasswordInput) {
     console.error("Password inputs not found");
     return;
   }
 
-
   const Password = PasswordInput.value;
   const ConfirmPassword = ConfirmPasswordInput.value;
 
-
   if (Password.trim() === "") {
-    return Toast(
-      "Notification",
-      "يرجى إدخال كلمة المرور"
-    );
+    return Toast("Notification", "يرجى إدخال كلمة المرور");
   }
-
 
   if (Password !== ConfirmPassword) {
-    return Toast(
-      "Notification",
-      "كلمة المرور غير متطابقة"
-    );
+    return Toast("Notification", "كلمة المرور غير متطابقة");
   }
-
 
   const options = {
     method: "POST",
@@ -574,78 +432,52 @@ function NewPassword() {
     })
   };
 
-
   fetch("/NewPassword", options)
     .then(CheckResponse)
     .then((Data) => {
-
       if (Data.id === "Success") {
         GoStepNext(2);
-      }
-
-      else {
+      } else {
         Toast(Data.id, Data.txt);
       }
-
     })
     .catch((error) => {
-
-      HandleFetchError(
-        error,
-        "حدث خطأ أثناء تغيير كلمة المرور"
-      );
-
+      HandleFetchError(error, "حدث خطأ أثناء تغيير كلمة المرور");
     });
 }
 
 
 /* =========================================================
-   GO STEP NEXT
+   GO STEP NEXT (تم إضافتها لتجنب خطأ عدم التعريف)
 ========================================================= */
 
 function GoStepNext(ID) {
-
   if (!ItemStep[ID] || !ContainerStep[ID]) {
     console.error("Invalid Step ID:", ID);
     return;
   }
 
-
   ItemStep[ID].classList.replace("active", "Done");
 
-
   const Circle = ItemStep[ID].querySelector(".circle");
-
   if (Circle) {
     Circle.classList.add("bx-check");
     Circle.innerText = "";
   }
 
-
   ContainerStep[ID].classList.remove("active");
-
-
-  // Check if next step exists
 
   if (ID + 1 >= ContainerStep.length) {
     return;
   }
 
-
   ContainerStep[ID + 1].classList.add("active");
 
-
   if (ItemStep[ID + 1]) {
-
     ItemStep[ID + 1].classList.add("active");
-
   }
 
-
-  const FirstInput =
-    ContainerStep[ID + 1].querySelector("input");
-
-
+  const FirstInput = ContainerStep[ID + 1].querySelector("input");
   if (FirstInput) {
     FirstInput.focus();
   }
@@ -657,42 +489,28 @@ function GoStepNext(ID) {
 ========================================================= */
 
 function GoStepBack(ID) {
-
   if (!ItemStep[ID] || !ContainerStep[ID]) {
     console.error("Invalid Step ID:", ID);
     return;
   }
 
-
   if (ID <= 0) {
     return;
   }
 
-
   ItemStep[ID - 1].classList.replace("Done", "active");
 
-
-  const Circle =
-    ItemStep[ID - 1].querySelector(".circle");
-
-
+  const Circle = ItemStep[ID - 1].querySelector(".circle");
   if (Circle) {
     Circle.classList.remove("bx-check");
     Circle.innerText = ID;
   }
 
-
   ItemStep[ID].classList.remove("active");
-
   ContainerStep[ID].classList.remove("active");
-
   ContainerStep[ID - 1].classList.add("active");
 
-
-  const FirstInput =
-    ContainerStep[ID - 1].querySelector("input");
-
-
+  const FirstInput = ContainerStep[ID - 1].querySelector("input");
   if (FirstInput) {
     FirstInput.focus();
   }
@@ -700,68 +518,41 @@ function GoStepBack(ID) {
 
 
 /* =========================================================
-   OTP INPUTS
+   OTP INPUTS (تم تعديلها لضمان إزالة التعطيل عند الكتابة)
 ========================================================= */
 
 CodeTxts.forEach((input, index) => {
-
   input.addEventListener("input", () => {
-
-    // Only one digit per input
-
-    input.value = input.value
-      .replace(/\D/g, "")
-      .slice(-1);
-
+    input.value = input.value.replace(/\D/g, "").slice(-1);
 
     const nextInput = CodeTxts[index + 1];
 
-
     if (nextInput && input.value !== "") {
-
       nextInput.removeAttribute("disabled");
-
       nextInput.focus();
-
     }
 
-
-    // Activate button when all fields are filled
-
-    const IsComplete =
-      Array.from(CodeTxts).every(
-        (input) => input.value !== ""
-      );
-
+    const IsComplete = Array.from(CodeTxts).every(
+      (inp) => inp.value !== ""
+    );
 
     if (Btn) {
-
       Btn.classList.toggle("active", IsComplete);
-
     }
-
   });
 
 
   input.addEventListener("keydown", (e) => {
-
     if (e.key === "Backspace" && input.value === "") {
-
       const previousInput = CodeTxts[index - 1];
 
-
       if (previousInput) {
-
-        input.setAttribute("disabled", true);
-
+        input.setAttribute("disabled", "true");
+        previousInput.removeAttribute("disabled"); // ضمان إعادة تفعيل الحقل السابق للكتابة بنجاح
         previousInput.focus();
-
       }
-
     }
-
   });
-
 });
 
 
@@ -769,8 +560,9 @@ CodeTxts.forEach((input, index) => {
    TOAST NOTIFICATIONS
 ========================================================= */
 
-function Toast(id, txt) {
+let ToastCounter = 0; // استخدام عداد تزايدي بدلاً من الـ length لمنع تكرار الـ ID
 
+function Toast(id, txt) {
   const Toasts = document.querySelector(".Toasts");
 
   if (!Toasts) {
@@ -778,63 +570,40 @@ function Toast(id, txt) {
     return;
   }
 
-
   let icon = "bell";
-
 
   if (id === "Success") {
     icon = "check";
-  }
-
-  if (id === "Error") {
+  } else if (id === "Error") {
     icon = "x";
   }
 
-
-  const length =
-    Toasts.querySelectorAll(".Toast").length;
-
+  const currentIndex = ToastCounter++;
 
   const MyToast = `
-
-    <div class="Toast index-${length}" id="${EscapeHTML(id)}">
-
+    <div class="Toast index-${currentIndex}" id="${EscapeHTML(id)}">
       <i class="bx bx-${EscapeHTML(icon)}"></i>
-
       <div>
         <h4>${EscapeHTML(id)}</h4>
         <h4 class="Toast-Txt">${EscapeHTML(txt)}</h4>
       </div>
-
-      <i
-        onclick="CloseToast(${length})"
-        class="bx bx-x X-Toast">
-      </i>
-
+      <i onclick="CloseToast(${currentIndex})" class="bx bx-x X-Toast"></i>
     </div>
-
   `;
-
 
   Toasts.insertAdjacentHTML("beforeend", MyToast);
 
-
-  const CurrentToast =
-    Toasts.querySelector(`.index-${length}`);
-
+  const CurrentToast = Toasts.querySelector(`.index-${currentIndex}`);
 
   if (!CurrentToast) return;
-
 
   setTimeout(() => {
     CurrentToast.classList.add("active");
   }, 100);
 
-
   setTimeout(() => {
-    CloseToast(length);
+    CloseToast(currentIndex);
   }, 5000);
-
 }
 
 
@@ -843,14 +612,12 @@ function Toast(id, txt) {
 ========================================================= */
 
 function EscapeHTML(value) {
-
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-
 }
 
 
@@ -859,28 +626,19 @@ function EscapeHTML(value) {
 ========================================================= */
 
 function CloseToast(index) {
-
   const Toasts = document.querySelector(".Toasts");
 
   if (!Toasts) return;
 
-
-  const ToastElement =
-    Toasts.querySelector(`.index-${index}`);
-
+  const ToastElement = Toasts.querySelector(`.index-${index}`);
 
   if (!ToastElement) return;
 
-
   ToastElement.classList.remove("active");
 
-
   setTimeout(() => {
-
     if (ToastElement.parentNode) {
       ToastElement.remove();
     }
-
   }, 500);
-
 }
