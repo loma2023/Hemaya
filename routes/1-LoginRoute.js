@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Mailer = require('nodemailer');
+require('dotenv').config();
 
 const transporter = Mailer.createTransport({
   service: 'gmail',
@@ -11,7 +12,6 @@ const transporter = Mailer.createTransport({
     pass: "j t z s y v s j w a i v k y c s",
   }
 });
-require('dotenv').config()
 
 const { RequireAuth, UnRequireAuth, CheckIfUser } = require("../middleware/middleware");
 const HemayaUser = require("../models/HemayaSchema");
@@ -31,24 +31,97 @@ router.get("/Activation", (req, res) => {
 
 router.get("/ForgotPassword", (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
-  res.render("Auth/ForgotPassword", { Title: "ForgotPassword" })
-})
+  res.render("Auth/ForgotPassword", { Title: "ForgotPassword" });
+});
 
+
+/* =========================================================
+   CHECK IF EMAIL EXISTS (تمت إضافتها لأنها كانت مفقودة)
+========================================================= */
+router.post("/isCurrentEmail", async (req, res) => {
+  try {
+    const CheckUser = await HemayaUser.findOne({ Email: req.body.Email });
+    if (CheckUser) {
+      return res.json({ id: "Error", txt: "البريد الإلكتروني مستخدم مسبقاً" });
+    }
+    res.json(Msg.Success);
+  } catch (err) {
+    console.error("Email Check Error:", err);
+    return res.json(Msg.Error);
+  }
+});
+
+
+/* =========================================================
+   REGISTER ROUTE (تمت إضافتها لأنها كانت مفقودة تماماً)
+========================================================= */
+router.post("/Register", async (req, res) => {
+  try {
+    const { 
+      Username, Phone, Address, Email, Password, 
+      NameCompany, TypeCompany, LogoCompany, 
+      CityCompany, AddressCompany, PhoneCompany1, PhoneCompany2 
+    } = req.body;
+
+    // التحقق إن كان المستخدم موجوداً مسبقاً
+    const existingUser = await HemayaUser.findOne({ Email });
+    if (existingUser) {
+      return res.json({ id: "Error", txt: "البريد الإلكتروني مسجل مسبقاً" });
+    }
+
+    // تشفير كلمة المرور
+    const HashedPassword = bcrypt.hashSync(Password, 10);
+
+    // إنشاء مستخدم جديد بناءً على الـ Schema
+    const newUser = new HemayaUser({
+      Username,
+      Phone,
+      Address,
+      Email,
+      Password: HashedPassword,
+      NameCompany,
+      TypeCompany,
+      LogoCompany,
+      CityCompany,
+      AddressCompany,
+      PhoneCompany1,
+      PhoneCompany2,
+      ActivedAt: new Date(),
+      Plan: "Month" // خطة افتراضية أو حسب النظام لديك
+    });
+
+    await newUser.save();
+    res.json(Msg.Success);
+
+  } catch (err) {
+    console.error("Register Server Error:", err);
+    return res.json({ id: "Error", txt: err.message || "حدث خطأ أثناء التسجيل" });
+  }
+});
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
 router.post("/Login", async (req, res) => {
   let CheckUser, UserData, TypeUser, Permissions = [];
   try {
     CheckUser = await HemayaUser.findOne({ Email: req.body.Email });
-    if (CheckUser) { TypeUser = "Owner"; UserData = CheckUser }
+    if (CheckUser) { TypeUser = "Owner"; UserData = CheckUser; }
     if (!CheckUser) {
-      CheckUser = await HemayaUser.findOne({ "UsersData.Email": req.body.Email })
-      if (CheckUser) { TypeUser = "User"; UserData = CheckUser.UsersData.find((item) => { return item.Email == req.body.Email; }) }
+      CheckUser = await HemayaUser.findOne({ "UsersData.Email": req.body.Email });
+      if (CheckUser) { 
+        TypeUser = "User"; 
+        UserData = CheckUser.UsersData.find((item) => item.Email == req.body.Email); 
+      }
       if (!CheckUser) {
-        return res.json(Msg.WrongEmail)
+        return res.json(Msg.WrongEmail);
       }
     }
     const match = await bcrypt.compare(req.body.Password, UserData.Password);
     if (!match) { return res.json(Msg.WrongEmail); }
-    if (TypeUser === "User") { Permissions = UserData.Permissions }
+    if (TypeUser === "User") { Permissions = UserData.Permissions; }
+    
     let Code = {
       ID: CheckUser._id,
       UserID: UserData._id,
@@ -64,60 +137,70 @@ router.post("/Login", async (req, res) => {
       TypeUser: TypeUser,
       Permissions: Permissions,
       DollarKey: process.env.DOLLAR_KEY,
-    }
+    };
 
-    let MaxAgeValue = 14;  // Latter
-    if (CheckUser.Plan === "Month") { MaxAgeValue = 30 }
-    if (CheckUser.Plan === "Year") { MaxAgeValue = 360 }
-    if (CheckUser.Plan === "Lifetime") { MaxAgeValue = 1000000 }
+    let MaxAgeValue = 14; 
+    if (CheckUser.Plan === "Month") { MaxAgeValue = 30; }
+    if (CheckUser.Plan === "Year") { MaxAgeValue = 360; }
+    if (CheckUser.Plan === "Lifetime") { MaxAgeValue = 1000000; }
 
-    let MaxAge = Math.floor((new Date() - new Date(CheckUser.ActivedAt)) / 86400000)
-    if (MaxAge >= MaxAgeValue) { return res.json(Msg.MaxAge) }
+    let MaxAge = Math.floor((new Date() - new Date(CheckUser.ActivedAt)) / 86400000);
+    if (MaxAge >= MaxAgeValue) { return res.json(Msg.MaxAge); }
 
-    let Diff = MaxAgeValue - MaxAge
+    let Diff = MaxAgeValue - MaxAge;
     if (Diff <= 2) {
       HemayaUser.updateOne({ _id: CheckUser._id }, {
         $push: {
           NotificationsData: {
-            Username: "تذكير بموعد الاشتراك", Text: `متبقي علي موعد دفع الاشتراك ${Diff} يوم`, Icon: "bx bx-calendar", CreatedAt: new Date(),
+            Username: "تذكير بموعد الاشتراك", 
+            Text: `متبقي علي موعد دفع الاشتراك ${Diff} يوم`, 
+            Icon: "bx bx-calendar", 
+            CreatedAt: new Date(),
           },
         }
-      })
-        .catch((err) => { return res.json(Msg.Error) })
+      }).catch((err) => { console.error(err); });
     }
 
     let token = jwt.sign(Code, process.env.JWT_SECRET_KEY);
     res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
-    res.json(Msg.Success)
+    res.json(Msg.Success);
   }
-  catch (err) { return res.json(Msg.Error) }
-
+  catch (err) { 
+    console.error("Login Error:", err);
+    return res.json(Msg.Error); 
+  }
 });
 
-// Create Random Code and Sent Email then redirect to ResetPassword
-let ForgotObj = { ID: "", }
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+let ForgotObj = { ID: "", };
 router.post("/ForgotPassword", async (req, res) => {
   let CheckUser; let TypeUser; let UserData; let CodeTxt = '';
   try {
     CheckUser = await HemayaUser.findOne({ Email: req.body.Email });
     if (CheckUser) { TypeUser = "Owner"; UserData = CheckUser; }
     if (!CheckUser) {
-      CheckUser = await HemayaUser.findOne({ "UsersData.Email": req.body.Email })
-      if (CheckUser) { TypeUser = "User"; UserData = CheckUser.UsersData.find((item) => { return item.Email == req.body.Email; }) }
+      CheckUser = await HemayaUser.findOne({ "UsersData.Email": req.body.Email });
+      if (CheckUser) { 
+        TypeUser = "User"; 
+        UserData = CheckUser.UsersData.find((item) => item.Email == req.body.Email); 
+      }
       if (!CheckUser) {
-        return res.json(Msg.WrongEmail)
+        return res.json(Msg.WrongEmail);
       }
     }
 
-    const hexString = "0123456789"
+    const hexString = "0123456789";
     for (let i = 0; i < 6; i++) {
-      CodeTxt += hexString[Math.floor(Math.random() * hexString.length)]
+      CodeTxt += hexString[Math.floor(Math.random() * hexString.length)];
     }
     const EmailObj = {
-      from: req.body.Email,
+      from: process.env.MY_EMAIL,
       to: req.body.Email,
       subject: 'Verification Email',
-      html: `${Msg.DesignGamilMsg}
+      html: `${Msg.DesignGamilMsg || ''}
       <div class="DetailsMsg">
           <p>عزيزي ${UserData.Username}</p>
           <p>لقد تلقينا طلبًا لإعادة تعيين كلمة المرور الخاصة بك</p>
@@ -130,33 +213,48 @@ router.post("/ForgotPassword", async (req, res) => {
       </div></body></html>`
     };
 
-    let SendMail = await transporter.sendMail(EmailObj)
+    let SendMail = await transporter.sendMail(EmailObj);
     if (SendMail) {
       ForgotObj = {
         ID: UserData._id,
         CodeTxt: CodeTxt,
         TypeUser: TypeUser,
-      }
-      console.log(CodeTxt)
+      };
       res.json(Msg.SendMail);
     } else {
       res.json(Msg.NotSendMail);
     }
   }
-  catch (err) { return res.json(Msg.Error) }
-})
-
-// Check If CodeTxt True redirect to NewPassword
-router.post("/ResetPassword", async (req, res) => {
-  try {
-    if (req.body.CodeTxt === ForgotObj.CodeTxt) { res.json(Msg.Success); }
-    else { res.json(Msg.WrongCode) }
+  catch (err) { 
+    console.error("ForgotPassword Error:", err);
+    return res.json(Msg.Error); 
   }
-  catch (err) { return res.json(Msg.Error) }
 });
 
+
+/* =========================================================
+   RESET PASSWORD
+========================================================= */
+router.post("/ResetPassword", async (req, res) => {
+  try {
+    if (req.body.CodeTxt === ForgotObj.CodeTxt) { 
+      res.json(Msg.Success); 
+    } else { 
+      res.json(Msg.WrongCode); 
+    }
+  }
+  catch (err) { 
+    console.error("ResetPassword Error:", err);
+    return res.json(Msg.Error); 
+  }
+});
+
+
+/* =========================================================
+   NEW PASSWORD
+========================================================= */
 router.post("/NewPassword", async (req, res) => {
-  let HashedPassword = bcrypt.hashSync(req.body.Password, 10)
+  let HashedPassword = bcrypt.hashSync(req.body.Password, 10);
 
   try {
     if (ForgotObj.TypeUser === "Owner") {
@@ -166,13 +264,15 @@ router.post("/NewPassword", async (req, res) => {
     }
     if (ForgotObj.TypeUser === "User") {
       await HemayaUser.updateOne({ "UsersData._id": ForgotObj.ID },
-        { "UsersData.$.Password": HashedPassword, }
-      )
+        { "UsersData.$.Password": HashedPassword }
+      );
     }
     res.json(Msg.Success);
   }
-  catch (err) { return res.json(Msg.Error) }
-
+  catch (err) { 
+    console.error("NewPassword Error:", err);
+    return res.json(Msg.Error); 
+  }
 });
 
 
